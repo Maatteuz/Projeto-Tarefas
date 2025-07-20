@@ -1,38 +1,377 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarefas</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tarefas</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    /* Animação */
+    #brilho, #brilho-desktop {
+      transition: transform 0.4s ease;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
-<body class="bg-black/5">
-    <header class="bg-white shadow-lg flex justify-between items-center px-[60px] py-4">
-        <div class="flex items-center gap-[70px]">
-            <h1 class="font-bold text-[26px]">Tarefas</h1>
-            <input class="bg-black/5 w-[500px] h-[46px] rounded pl-4" type="text" placeholder="Pesquisar">
+<body class="bg-black/5 light" id="body">
+
+  <header id="header" class="bg-white shadow-lg px-4 md:px-[60px] py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between relative">
+    <div class="flex flex-col md:flex-row md:items-center md:gap-8 w-full">
+      <div class="flex justify-between items-center w-full lg:w-auto">
+        <h1 id="titulo-principal" class="font-bold text-[26px] text-black">To-do-List</h1>
+
+        <!-- Lupa e Lua (P/Mobile) -->
+        <div class="flex items-center md:hidden gap-3">
+          <button id="btn-toggle-search">
+            <box-icon id="search-icon" name="search"></box-icon>
+          </button>
+          <!-- ID da Lua -->
+          <box-icon id="brilho" name="moon" type="solid" class="cursor-pointer mb-[7px]" color="#2D2D2D"></box-icon>
         </div>
-        <box-icon name='moon' type='solid' ></box-icon>
-    </header>
-    <div class="px-[60px] pt-[60px]">
-    <div class="flex justify-between items-center">
-        <h2 class="font-bold text-[36px] text-black/50">Tarefas</h2>
-        <button class="h-[46px] flex gap-4 items-center bg-black rounded px-4 text-white fill-white uppercase font-bold text-[12px]">
-            <box-icon name='plus-circle' ></box-icon>
-            Nova tarefa
-        </button>
+      </div>
+
+      <!-- Input de pesquisa -->
+      <input id="input-pesquisa" type="text" placeholder="Pesquisar" class="hidden md:block bg-black/5 md:w-[500px] h-[46px] rounded pl-4 placeholder-black/50 text-black focus:placeholder-transparent transition-all duration-300 ease-in-out"/>
     </div>
 
+    <!-- Desktop Icons-->
+    <div class="hidden md:flex justify-end">
+      <box-icon id="brilho-desktop" name="moon" type="solid" class="cursor-pointer" color="#2D2D2D"></box-icon>
+    </div>
+
+    <!-- Input que aparece no mobile -->
+    <input id="input-pesquisa-mobile" type="text" placeholder="Pesquisar" class="hidden md:hidden bg-black/5 w-full h-[46px] rounded pl-4 placeholder-black/50 text-black transition-all duration-300 ease-in-out transform scale-y-0 origin-top"/>
+  </header>
+
+  <main class="px-4 pt-6 md:px-[60px] md:pt-[60px]" id="main-content">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center relative">
+      <h2 id="titulo-tarefas" class="text-[30px] leading-[28px] font-bold text-black/50 w-[90px] h-[28px] mb-4 md:mb-0 md:text-[36px] md:w-[134px] md:h-[28px]">Tarefas</h2>
+
+      <button id="nova-tarefa" class="fixed bottom-6 right-6 w-[50px] h-[50px] rounded-full bg-black text-white flex items-center justify-center p-0 shadow-lg z-30 md:static md:w-auto md:h-[46px] md:rounded md:px-4 md:shadow-none md:flex-row md:gap-4 md:cursor-pointer md:uppercase md:font-semibold"
+      >
+        <box-icon id="plus-icon" type="solid" name="plus-circle" color="#FFFFFF"></box-icon>
+        <span class="hidden md:inline">Nova tarefa</span>
+      </button>
+    </div>
+
+    <!-- ??? -->
     <div id="lista-de-tarefas">
-        
+
+      <!-- Parte Drawer -->
+      <div id="Overlay" class="fixed inset-0 bg-black/40 opacity-0 pointer-events-none transition-opacity duration-300 z-30"></div>
+      <div id="drawer" class="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-40 translate-x-full transition-transform duration-300 ease-in-out p-6">
+          <h2 id="drawer-titulo" class="text-[22px] font-bold mb-8 text-black">Adicionar</h2>
+          <button id="FecharDrawer" class="absolute top-4 right-4">
+              <box-icon id="fechar-icon" name="x" class="w-8 h-13 cursor-pointer" color="#666"></box-icon>
+          </button>
+
+          <!-- Parte do Título -->
+          <label id="label-titulo" class="text-[14px] font-semibold text-black/70 block mb-1">Título</label>
+          <input id="input-titulo" type="text" class="w-full h-[40px] mb-6 rounded bg-black/5 px-3 text-black"/>
+
+          <!-- Parte da Descrição -->
+          <label id="label-descricao" class="text-[14px] font-semibold text-black/70 block mb-1">Descrição</label>
+          <textarea id="textarea-descricao" class="w-full h-[80px] rounded bg-black/5 px-3 py-2 resize-none text-black"></textarea>
+          <button id="btn-criar" class="mt-4 w-[268px] h-[46px] bg-[#2D2D2D] text-white rounded-[5px] hover:bg-[#4F46E5] transition-colors cursor-pointer">Criar</button>
+      </div>
+
+      <!-- Cards -->
+      <div class="mt-10 flex flex-wrap gap-6 justify-start lg:px-0">
+        <!-- Card 1 -->
+        <div class="card w-full sm:w-[300px] lg:w-[318px] lg:h-[163px] bg-white rounded-[5px] shadow hover:shadow-lg hover:scale-105 transition-transform duration-200 p-4 flex flex-col justify-between">
+          <p class="card-titulo font-bold text-[16px] text-black">Título da Tarefa</p>
+          <div class="overflow-hidden my-2">
+            <p class="text-[14.5px] text-[#808080] leading-tight">
+              Lorem ipsum dolor sit amet consectetur. Sed et urna mi tellus.
+            </p>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="card-data text-[13px] font-bold text-black/50">24/07/2024</span>
+            <div class="flex gap-2 items-center">
+              <box-icon class="card-icon cursor-pointer" name="pencil" type="solid" size="20px" color="#666"></box-icon>
+              <box-icon class="card-icon cursor-pointer" name="trash-alt" type="solid" size="20px" color="#666"></box-icon>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="card w-full sm:w-[300px] lg:w-[318px] lg:h-[163px] bg-white rounded-[5px] shadow hover:shadow-lg hover:scale-105 transition-transform duration-200 p-4 flex flex-col justify-between">
+          <p class="card-titulo font-bold text-[16px] text-black">Título da Tarefa</p>
+          <div class="overflow-hidden my-2">
+            <p class="text-[14.5px] text-[#808080] leading-tight">
+              Lorem ipsum dolor sit amet consectetur. Sed et urna mi tellus.
+            </p>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="card-data text-[13px] font-bold text-black/50">24/07/2024</span>
+            <div class="flex gap-2 items-center">
+              <box-icon class="card-icon cursor-pointer" name="pencil" type="solid" size="20px" color="#666"></box-icon>
+              <box-icon class="card-icon cursor-pointer" name="trash-alt" type="solid" size="20px" color="#666"></box-icon>
+            </div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="card w-full sm:w-[300px] lg:w-[318px] lg:h-[163px] bg-white rounded-[5px] shadow hover:shadow-lg hover:scale-105 transition-transform duration-200 p-4 flex flex-col justify-between">
+          <p class="card-titulo font-bold text-[16px] text-black">Título da Tarefa</p>
+          <div class="overflow-hidden my-2">
+            <p class="text-[14.5px] text-[#808080] leading-tight">
+              Lorem ipsum dolor sit amet consectetur. Sed et urna mi tellus.
+            </p>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="card-data text-[13px] font-bold text-black/50">24/07/2024</span>
+            <div class="flex gap-2 items-center">
+              <box-icon class="card-icon cursor-pointer" name="pencil" type="solid" size="20px" color="#666"></box-icon>
+              <box-icon class="card-icon cursor-pointer" name="trash-alt" type="solid" size="20px" color="#666"></box-icon>
+            </div>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="card w-full sm:w-[300px] lg:w-[318px] lg:h-[163px] bg-white rounded-[5px] shadow hover:shadow-lg hover:scale-105 transition-transform duration-200 p-4 flex flex-col justify-between">
+          <p class="card-titulo font-bold text-[16px] text-black">Título da Tarefa</p>
+          <div class="overflow-hidden my-2">
+            <p class="text-[14.5px] text-[#808080] leading-tight">
+              Lorem ipsum dolor sit amet consectetur. Sed et urna mi tellus.
+            </p>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="card-data text-[13px] font-bold text-black/50">24/07/2024</span>
+            <div class="flex gap-2 items-center">
+              <box-icon class="card-icon cursor-pointer" name="pencil" type="solid" size="20px" color="#666"></box-icon>
+              <box-icon class="card-icon cursor-pointer" name="trash-alt" type="solid" size="20px" color="#666"></box-icon>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </main>
 
+  <!-- BoxIcons -->
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 
-         <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+ <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Elementos
+    const btnNovaTarefa = document.getElementById("nova-tarefa");
+    const drawer = document.getElementById("drawer");
+    const FecharDrawer = document.getElementById("FecharDrawer");
+    const Overlay = document.getElementById("Overlay");
+    const brilhoIcon = document.getElementById("brilho");
+    const brilhoIconDesktop = document.getElementById("brilho-desktop");
+    const body = document.getElementById("body");
+    const header = document.getElementById("header");
+    const plusIcon = document.getElementById("plus-icon");
+    const inputPesquisa = document.getElementById("input-pesquisa");
+    const inputPesquisaMobile = document.getElementById("input-pesquisa-mobile");
+    const btnSearch = document.getElementById("btn-toggle-search");
+    const searchIcon = btnSearch ? btnSearch.querySelector("box-icon") : null;
+    const tituloPrincipal = document.getElementById("titulo-principal");
+    const tituloTarefas = document.getElementById("titulo-tarefas");
+    const cards = document.querySelectorAll(".card");
+    const cardTitulos = document.querySelectorAll(".card-titulo");
+    const cardDatas = document.querySelectorAll(".card-data");
+    const cardIcons = document.querySelectorAll(".card-icon");
+    const drawerTitulo = document.getElementById("drawer-titulo");
+    const labelTitulo = document.getElementById("label-titulo");
+    const labelDescricao = document.getElementById("label-descricao");
+    const inputTitulo = document.getElementById("input-titulo");
+    const textareaDescricao = document.getElementById("textarea-descricao");
+    const btnCriar = document.getElementById("btn-criar");
+    const fecharIcon = document.getElementById("fechar-icon");
+
+    // Estado do tema (false = claro, true = escuro)
+    let temaEscuro = false;
+
+    // Abrir Drawer ( Nova tarefa )
+    btnNovaTarefa.addEventListener("click", () => {
+      drawer.classList.remove("translate-x-full");
+      drawer.classList.add("translate-x-0");
+      Overlay.classList.remove("opacity-0", "pointer-events-none");
+      Overlay.classList.add("opacity-100");
+    });
+
+    function fecharDrawer() {
+      drawer.classList.add("translate-x-full");
+      drawer.classList.remove("translate-x-0");
+      Overlay.classList.remove("opacity-100");
+      Overlay.classList.add("opacity-0", "pointer-events-none");
+    }
+
+    FecharDrawer.addEventListener("click", fecharDrawer);
+    Overlay.addEventListener("click", fecharDrawer);
+
+    // Função para hover dos ícones dos cards
+    function setCardIconHover(isDark) {
+      cardIcons.forEach(icon => {
+        icon.replaceWith(icon.cloneNode(true)); // limpa event listeners anteriores
+      });
+
+      const updatedIcons = document.querySelectorAll(".card-icon");
+
+      updatedIcons.forEach(icon => {
+        if (isDark) {
+          icon.setAttribute("color", "#C3C3C3");
+
+          icon.addEventListener("mouseenter", () => {
+            icon.setAttribute("color", "#7CFFB0");
+          });
+
+          icon.addEventListener("mouseleave", () => {
+            icon.setAttribute("color", "#C3C3C3");
+          });
+        } else {
+          icon.setAttribute("color", "#666");
+
+          icon.addEventListener("mouseenter", () => {
+            icon.setAttribute("color", "#2D2D2D");
+          });
+
+          icon.addEventListener("mouseleave", () => {
+            icon.setAttribute("color", "#666");
+          });
+        }
+      });
+    }
+
+    // Claro inicial
+    setCardIconHover(false);
+
+    // Trocar tema
+    function toggleTema() {
+      brilhoIcon.style.transform = "rotate(360deg)";
+      if (brilhoIconDesktop) brilhoIconDesktop.style.transform = "rotate(360deg)";
+
+      setTimeout(() => {
+        if (!temaEscuro) {
+          body.classList.replace("light", "dark");
+          body.classList.replace("bg-black/5", "bg-[#1A1A1A]");
+          header.classList.replace("bg-white", "bg-[#111111]");
+
+          brilhoIcon.setAttribute("name", "sun");
+          brilhoIcon.setAttribute("color", "#7CFFB0");
+          if (brilhoIconDesktop) {
+            brilhoIconDesktop.setAttribute("name", "sun");
+            brilhoIconDesktop.setAttribute("color", "#7CFFB0");
+          }
+
+          btnNovaTarefa.classList.replace("bg-black", "bg-[#7CFFB0]");
+          btnNovaTarefa.classList.replace("text-white", "text-black");
+          plusIcon.setAttribute("color", "#2D2D2D");
+
+          inputPesquisa.classList.replace("bg-black/5", "bg-[#FFFFFF1A]");
+          inputPesquisa.classList.replace("placeholder-black/50", "placeholder-white/50");
+          inputPesquisa.classList.replace("text-black", "text-white");
+
+          tituloPrincipal.classList.replace("text-black", "text-[#FDFDFD]");
+          tituloTarefas.classList.replace("text-black/50", "text-[#B0B0B0]");
+
+          cards.forEach(card => card.classList.replace("bg-white", "bg-[#2D2D2D]"));
+          cardTitulos.forEach(t => t.classList.replace("text-black", "text-[#C3C3C3]"));
+          cardDatas.forEach(d => d.classList.replace("text-black/50", "text-[#C3C3C3]"));
+
+          setCardIconHover(true);
+
+          drawer.classList.replace("bg-white", "bg-[#1A1A1A]");
+          drawerTitulo.classList.replace("text-black", "text-[#B0B0B0]");
+          labelTitulo.classList.replace("text-black/70", "text-white");
+          labelDescricao.classList.replace("text-black/70", "text-white");
+          inputTitulo.classList.replace("bg-black/5", "bg-[#2D2D2D]");
+          inputTitulo.classList.replace("text-black", "text-white");
+          textareaDescricao.classList.replace("bg-black/5", "bg-[#2D2D2D]");
+          textareaDescricao.classList.replace("text-black", "text-white");
+          btnCriar.classList.replace("bg-[#2D2D2D]", "bg-[#7CFFB0]");
+          btnCriar.classList.replace("text-white", "text-black");
+
+          fecharIcon.setAttribute("color", "#666");
+
+          if (searchIcon) searchIcon.setAttribute("color", "#FFFFFF");
+          if (inputPesquisaMobile) {
+            inputPesquisaMobile.classList.replace("bg-black/5", "bg-[#FFFFFF1A]");
+            inputPesquisaMobile.classList.replace("placeholder-black/50", "placeholder-white/50");
+            inputPesquisaMobile.classList.replace("text-black", "text-white");
+          }
+
+          temaEscuro = true;
+        } else {
+          body.classList.replace("dark", "light");
+          body.classList.replace("bg-[#1A1A1A]", "bg-black/5");
+          header.classList.replace("bg-[#111111]", "bg-white");
+
+          brilhoIcon.setAttribute("name", "moon");
+          brilhoIcon.setAttribute("color", "#2D2D2D");
+          if (brilhoIconDesktop) {
+            brilhoIconDesktop.setAttribute("name", "moon");
+            brilhoIconDesktop.setAttribute("color", "#2D2D2D");
+          }
+
+          btnNovaTarefa.classList.replace("bg-[#7CFFB0]", "bg-black");
+          btnNovaTarefa.classList.replace("text-black", "text-white");
+          plusIcon.setAttribute("color", "#FFFFFF");
+
+          inputPesquisa.classList.replace("bg-[#FFFFFF1A]", "bg-black/5");
+          inputPesquisa.classList.replace("placeholder-white/50", "placeholder-black/50");
+          inputPesquisa.classList.replace("text-white", "text-black");
+
+          tituloPrincipal.classList.replace("text-[#FDFDFD]", "text-black");
+          tituloTarefas.classList.replace("text-[#B0B0B0]", "text-black/50");
+
+          cards.forEach(card => card.classList.replace("bg-[#2D2D2D]", "bg-white"));
+          cardTitulos.forEach(t => t.classList.replace("text-[#C3C3C3]", "text-black"));
+          cardDatas.forEach(d => d.classList.replace("text-[#C3C3C3]", "text-black/50"));
+
+          setCardIconHover(false);
+
+          drawer.classList.replace("bg-[#1A1A1A]", "bg-white");
+          drawerTitulo.classList.replace("text-[#B0B0B0]", "text-black");
+          labelTitulo.classList.replace("text-white", "text-black/70");
+          labelDescricao.classList.replace("text-white", "text-black/70");
+          inputTitulo.classList.replace("bg-[#2D2D2D]", "bg-black/5");
+          inputTitulo.classList.replace("text-white", "text-black");
+          textareaDescricao.classList.replace("bg-[#2D2D2D]", "bg-black/5");
+          textareaDescricao.classList.replace("text-white", "text-black");
+          btnCriar.classList.replace("bg-[#7CFFB0]", "bg-[#2D2D2D]");
+          btnCriar.classList.replace("text-black", "text-white");
+
+          fecharIcon.setAttribute("color", "#666");
+
+          if (searchIcon) searchIcon.setAttribute("color", "#000000");
+          if (inputPesquisaMobile) {
+            inputPesquisaMobile.classList.replace("bg-[#FFFFFF1A]", "bg-black/5");
+            inputPesquisaMobile.classList.replace("placeholder-white/50", "placeholder-black/50");
+            inputPesquisaMobile.classList.replace("text-white", "text-black");
+          }
+
+          temaEscuro = false;
+        }
+
+        brilhoIcon.style.transform = "rotate(0deg)";
+        if (brilhoIconDesktop) brilhoIconDesktop.style.transform = "rotate(0deg)";
+      }, 400);
+    }
+
+    brilhoIcon.addEventListener("click", toggleTema);
+    if (brilhoIconDesktop) brilhoIconDesktop.addEventListener("click", toggleTema);
+
+    // Pesquisa mobile
+    if (btnSearch) {
+      btnSearch.addEventListener("click", () => {
+        if (inputPesquisaMobile.classList.contains("hidden")) {
+          inputPesquisaMobile.classList.remove("hidden");
+          requestAnimationFrame(() => {
+            inputPesquisaMobile.classList.remove("scale-y-0");
+            inputPesquisaMobile.classList.add("scale-y-100");
+          });
+        } else {
+          inputPesquisaMobile.classList.remove("scale-y-100");
+          inputPesquisaMobile.classList.add("scale-y-0");
+          setTimeout(() => {
+            inputPesquisaMobile.classList.add("hidden");
+          }, 300);
+        }
+      });
+    }
+  });
+</script>
 
 </body>
 </html>
