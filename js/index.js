@@ -251,6 +251,7 @@
 
 function criarTarefa(){
     event.preventDefault ();
+
     fetch ("http://localhost:3000/tarefas", {
       method: "post" ,
       headers: {
@@ -259,6 +260,12 @@ function criarTarefa(){
       body: JSON.stringify(capturarDados("#formCriar"))
     })
 //    .then (resposta => resposta .json ())
+}
+
+function deletarTarefa(idDaTarefa) {
+    fetch ("http://localhost:3000/tarefas/${idDaTarefa}", {
+      method: "delete" ,
+})
 }
 
 function capturarDados (idDeUmFormulario){
