@@ -7,22 +7,10 @@
       "data": "02/08/2025"
     },
     {
-      "id": "0bdf",
-      "titulo": "tarde",
-      "descricao": "testestestestestestestestestestestestestestestestestestestestestestestestestestestestestes",
-      "data": "02/08/2025"
-    },
-    {
       "id": "32ff",
       "titulo": "s",
       "descricao": "function ativarVerMais() {\n  const cards = document.querySelectorAll(\".card\");\n\n  cards.forEach(card => {\n    const descricaoContainer = card.querySelector(\".descricao-container\");\n    if (!descricaoContainer) return;\n\n    const textoCurto = descricaoContainer.querySelector(\".descricao-texto\");\n    const textoCompleto = descricaoContainer.querySelector(\".descricao-completa\");\n\n    if (!textoCompleto || !textoCurto) return;\n\n    // Remove botão antigo se existir\n    const btnExistente = descricaoContainer.querySelector(\".ver-mais\");\n    if (btnExistente) btnExistente.remove();\n\n    // Para medir o elemento escondido, remove temporariamente 'hidden' e 'position:absolute' se houver, mas com visibilidade 'hidden' e altura 'auto' para não impactar layout\n    textoCompleto.style.display = \"block\";\n    textoCompleto.style.position = \"absolute\";\n    textoCompleto.style.visibility = \"hidden\";\n    textoCompleto.style.height = \"auto\";\n\n    const alturaCurto = textoCurto.getBoundingClientRect().height;\n    const alturaCompleto = textoCompleto.getBoundingClientRect().height;\n\n    // Voltar o textoCompleto ao estado inicial (escondido)\n    textoCompleto.style.display = \"\";\n    textoCompleto.style.position = \"\";\n    textoCompleto.style.visibility = \"\";\n    textoCompleto.style.height = \"\";\n\n    if (alturaCurto < alturaCompleto) {\n      const botaoVerMais = document.createElement(\"button\");\n      botaoVerMais.className = \"ver-mais text-[#4F46E5] text-sm font-semibold mt-1 cursor-pointer select-none bg-transparent border-none p-0\";\n      botaoVerMais.textContent = \"Ver mais\";\n\n      descricaoContainer.appendChild(botaoVerMais);\n\n      botaoVerMais.addEventListener(\"click\", () => {\n        if (textoCompleto.classList.contains(\"hidden\")) {\n          textoCompleto.classList.remove(\"hidden\");\n          textoCurto.classList.add(\"hidden\");\n          botaoVerMais.textContent = \"Ver menos\";\n          descricaoContainer.style.maxHeight = \"none\";\n        } else {\n          textoCompleto.classList.add(\"hidden\");\n          textoCurto.classList.remove(\"hidden\");\n          botaoVerMais.textContent = \"Ver mais\";\n          descricaoContainer.style.maxHeight = null;\n        }\n      });\n    } else {\n      descricaoContainer.style.maxHeight = null;\n    }\n  });\n}",
       "data": "02/08/2025"
-    },
-    {
-      "titulo": "aaa",
-      "descricao": "percebi algo muito mais peculiar sobre esses cards : o numero de caracteres nao influencia no numero de linhas ; isso pro usuario nao é muito interessante ( se ele fizer um texto por exemplo deste tamanho , o card vai seguir uma linha infinita pq ele nao ''criou'' uma quebra de linha manualmente",
-      "data": "02/08/2025",
-      "id": "6a83"
     },
     {
       "id": "0308",
@@ -35,6 +23,23 @@
       "titulo": "a",
       "descricao": "a",
       "data": "03/08/2025"
+    },
+    {
+      "id": "d320",
+      "titulo": "a",
+      "descricao": "a",
+      "data": "03/08/2025"
+    },
+    {
+      "id": "f1f5",
+      "titulo": "oi",
+      "descricao": "s",
+      "data": "03/08/2025"
+    },
+    {
+      "id": "6732",
+      "titulo": "a",
+      "descricao": "a"
     }
   ]
 }

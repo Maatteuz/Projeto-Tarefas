@@ -235,7 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   FecharDrawer.addEventListener("click", fecharDrawer);
   Overlay.addEventListener("click", () => {
-  });
+  fecharDrawer();
+});
 
   // Pesquisa mobile
   if (btnSearch) {
@@ -278,7 +279,7 @@ inputDesktop.addEventListener('input', () => aplicarFiltroDeBusca(inputDesktop))
 inputMobile.addEventListener('input', () => aplicarFiltroDeBusca(inputMobile));
 
 
-  // Função para carregar tarefas na tela, com botão Ver Mais/Ver Menos para descrição
+  // Função para carregar tarefas na tela
 function carregarTarefas(tarefas) {
   listaDeTarefas.innerHTML = "";
 
