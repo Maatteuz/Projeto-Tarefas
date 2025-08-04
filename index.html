@@ -70,7 +70,22 @@
 
         <button id="btn-criar" type="submit" class="mt-4 w-[268px] h-[46px] bg-[#2D2D2D] text-white rounded-[5px] hover:bg-[#4F46E5] transition-colors cursor-pointer">Criar</button>
       </form>
+      <!-- Editar -->
+        <form id="formEditar" onsubmit="editarTarefa()" class="hidden">
+          <h3 class="flex justify-between items-center text-[20px] font-bold">Atualizar
+          <box-icon name='x' onclick="fecharGaveta()"></box-icon></h3>
+        <input type="hidden" name="tarefa_id">
+        <label id="label-titulo" class="text-[14px] font-semibold text-black/70 block mb-1">Título</label>
+        <input id="input-titulo" name="input-titulo" type="text" class="w-full h-[40px] mb-6 rounded bg-black/5 px-3 text-black"/>
+
+        <label id="label-descricao" class="text-[14px] font-semibold text-black/70 block mb-1">Descrição</label>
+        <textarea id="textarea-descricao" name="textarea-descricao" class="w-full h-[80px] rounded bg-black/5 px-3 py-2 resize-none text-black"></textarea>
+
+        <button id="btn-criar" type="submit" class="mt-4 w-[268px] h-[46px] bg-[#2D2D2D] text-white rounded-[5px] hover:bg-[#4F46E5] transition-colors cursor-pointer">Editar</button>
+      </form>
+  
     </div>
+
 
     <!-- Lista de Tarefas -->
     <div id="lista-de-tarefas" class="mt-10 flex flex-wrap gap-6 justify-start lg:px-0">

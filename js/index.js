@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Listener para deletar tarefa na lixeira
+    // para deletar tarefa
     updatedIcons.forEach(icon => {
       if (icon.getAttribute("name") === "trash-alt") {
         icon.addEventListener("click", (event) => {
@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fecharDrawer();
 });
 
-  // Pesquisa mobile
+  // Pesquisa (mobile)
   if (btnSearch) {
     btnSearch.addEventListener("click", () => {
       if (inputPesquisaMobile.classList.contains("hidden")) {
@@ -307,7 +307,7 @@ function carregarTarefas(tarefas) {
         <div class="flex justify-between items-center pt-2">
           <span class="card-data text-[13px] font-bold ${dataClass}">${tarefa.data}</span>
           <div class="flex gap-2 items-center">
-            <box-icon class="card-icon cursor-pointer" name="pencil" type="solid" size="20px" color="${iconColor}"></box-icon>
+            <box-icon class="card-icon cursor-pointer" name="pencil" onclick="abrirGaveta(true), preencherFormulario(${tarefa.id})" type="solid" size="20px" color="${iconColor}"></box-icon>
             <box-icon class="card-icon cursor-pointer" name="trash-alt" type="solid" size="20px" color="${iconColor}"></box-icon>
           </div>
         </div>
@@ -318,11 +318,14 @@ function carregarTarefas(tarefas) {
   setCardIconHover(temaEscuro);
 }
 
-  // Função para buscar tarefas via API
+let lista = []
+
+  // Função para buscar tarefas 
   function buscarTarefas() {
     fetch("http://localhost:3000/tarefas")
       .then(resposta => resposta.json())
       .then(json => {
+        lista = json;
         carregarTarefas(json);
       })
       .catch(erro => alert("Erro ao buscar tarefas: " + erro.message));
@@ -335,16 +338,17 @@ function carregarTarefas(tarefas) {
     let form = document.querySelector(idDeUmFormulario);
     let formData = new FormData(form);
     let dados = Object.fromEntries(formData.entries());
+        data: new Date().toLocaleDateString().split('/').reverse().join('-');
     return dados;
   }
 
-  // Função para criar tarefa via API
+  // Função para criar tarefa
   function criarTarefa(event) {
     event.preventDefault();
 
     const dados = capturarDados("#formCriar");
 
-    // Validação simples
+    // Validação 
     if (!dados["input-titulo"] || dados["input-titulo"].trim() === "") {
       alert("O título é obrigatório!");
       return;
@@ -353,7 +357,7 @@ function carregarTarefas(tarefas) {
     const payload = {
       titulo: dados["input-titulo"].trim(),
       descricao: dados["textarea-descricao"] ? dados["textarea-descricao"].trim() : "",
-      data: new Date().toLocaleDateString("pt-BR"),
+      data: new Date().toLocaleDateString()
     };
 
     fetch("http://localhost:3000/tarefas", {
@@ -366,9 +370,9 @@ function carregarTarefas(tarefas) {
         return resposta.json();
       })
       .then(() => {
-        buscarTarefas(); // atualiza lista
+        buscarTarefas(); 
         fecharDrawer();
-        // Limpa formulário
+        
         inputTitulo.value = "";
         textareaDescricao.value = "";
       })
@@ -377,11 +381,11 @@ function carregarTarefas(tarefas) {
       });
   }
 
-  // Atrela o submit do formulário ao criarTarefa
+  
   const formCriar = document.querySelector("#formCriar");
   formCriar.addEventListener("submit", criarTarefa);
 
-  // Função para deletar tarefa via API (retorna Promise)
+  
   function deletarTarefa(idDaTarefa) {
     return fetch(`http://localhost:3000/tarefas/${idDaTarefa}`, {
       method: "DELETE",
@@ -389,4 +393,26 @@ function carregarTarefas(tarefas) {
   }
 });
 
+function editarTarefa(){
+  event.preventDefault();
+  const id = document.querySelector ("formEditar input[name='tarefa_id']").value;
+  fetch(`http://localhost:3000/tarefas/${id})`,{
+    method: "put",
+    headers: {
+      "Content-type": "application/json"
+    },
+    body: JSON.stringify(capturarDados("#formEditar"))
+})
+}
+
+function preencherFormulario(idDaTarefa){
+  let idValue = document.querySelector ("#formEditar input[name='tarefa_id']");
+  let tituloValue = document.querySelector ("formEditar input[name='titulo]");
+  let descricaoValue = document.querySelector ("#formEditar textarea[name='descricao']");
+  let tarefa = lista.find(item => item.id == idDaTarefa);
+
+  idValue.value = tarefa.id;
+  tituloValue.value = tarefa.titulo;
+  descricaoValue.value = tarefa.descricao;
+}
 
